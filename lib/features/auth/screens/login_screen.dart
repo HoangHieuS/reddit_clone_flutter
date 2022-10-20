@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:reddit_clone/core/constants/constants.dart';
+import 'package:reddit_clone/core/constants/app_constants.dart';
 
 import '../../../core/common/sign_in_button.dart';
 
@@ -11,7 +11,7 @@ class LoginScreen extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: Image.asset(
-          Constants.logoPath,
+          AppConstants.logoPath,
           height: 40,
         ),
         centerTitle: true,
@@ -40,7 +40,7 @@ class LoginScreen extends StatelessWidget {
           Padding(
             padding: const EdgeInsets.all(8.0),
             child: Image.asset(
-              Constants.loginEmotePath,
+              AppConstants.loginEmotePath,
               height: 400,
             ),
           ),

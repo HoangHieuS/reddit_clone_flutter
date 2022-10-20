@@ -3,7 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:reddit_clone/features/auth/controller/auth_controller.dart';
 import 'package:reddit_clone/theme/pallete.dart';
 
-import '../constants/constants.dart';
+import '../constants/app_constants.dart';
 
 class SignInButton extends ConsumerWidget {
   const SignInButton({super.key});
@@ -19,7 +19,7 @@ class SignInButton extends ConsumerWidget {
       child: ElevatedButton.icon(
         onPressed: () => signInWithGoogle(ref),
         icon: Image.asset(
-          Constants.googleLogoPath,
+          AppConstants.googleLogoPath,
           width: 35,
         ),
         label: const Text(
