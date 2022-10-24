@@ -13,5 +13,8 @@ final loggedInRoute = RouteMap(
     '/': (_) => const MaterialPage(child: HomeScreen()),
     '/create-community': (_) =>
         const MaterialPage(child: CreateCommunityScreen()),
+    '/r/:name': (route) => MaterialPage(
+          child: CommunityScreen(name: route.pathParameters['name']!),
+        ),
   },
 );
