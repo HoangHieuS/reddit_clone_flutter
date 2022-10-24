@@ -8,6 +8,11 @@ import 'package:routemaster/routemaster.dart';
 import '../../../core/constants/constants.dart';
 import '../../../models/models.dart';
 
+final userCommunitiesProvider = StreamProvider((ref) {
+  final communityController = ref.watch(communityControllerProvider.notifier);
+  return communityController.getUserCommunities();
+});
+
 final communityControllerProvider =
     StateNotifierProvider<CommunityController, bool>((ref) {
   final communityRepo = ref.watch(communityRepoProvider);
@@ -44,5 +49,10 @@ class CommunityController extends StateNotifier<bool> {
         Routemaster.of(context).pop();
       },
     );
+  }
+
+  Stream<List<Community>> getUserCommunities() {
+    final uid = _ref.read(userProvider)!.uid;
+    return _communityRepo.getUserCommunities(uid);
   }
 }
