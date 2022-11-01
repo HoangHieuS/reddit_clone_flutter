@@ -3,11 +3,18 @@ import 'package:routemaster/routemaster.dart';
 
 class ModToolScreen extends StatelessWidget {
   final String name;
-  const ModToolScreen({Key? key, required this.name,}) : super(key: key);
+  const ModToolScreen({
+    Key? key,
+    required this.name,
+  }) : super(key: key);
 
-   void navigateToEditCommunity(BuildContext context) {
-      Routemaster.of(context).push('/edit-community/$name');
-    }
+  void navigateToEditCommunity(BuildContext context) {
+    Routemaster.of(context).push('/edit-community/$name');
+  }
+
+  void navigateToAddMods(BuildContext context) {
+    Routemaster.of(context).push('/add-mod/$name');
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -21,7 +28,7 @@ class ModToolScreen extends StatelessWidget {
           ListTile(
             leading: const Icon(Icons.add_moderator),
             title: const Text('Add Moderators'),
-            onTap: () {},
+            onTap: () => navigateToAddMods(context),
           ),
           ListTile(
             leading: const Icon(Icons.edit),
