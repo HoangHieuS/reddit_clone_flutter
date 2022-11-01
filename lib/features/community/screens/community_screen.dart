@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:reddit_clone/core/common/common.dart';
 import 'package:reddit_clone/features/community/controller/community_controller.dart';
+import 'package:reddit_clone/models/community_model.dart';
 import 'package:routemaster/routemaster.dart';
 
 import '../../auth/controller/auth_controller.dart';
@@ -11,13 +12,17 @@ class CommunityScreen extends ConsumerWidget {
   const CommunityScreen({
     super.key,
     required this.name,
-
-    
   });
 
   void navigateToModTools(BuildContext context) {
-      Routemaster.of(context).push('/mod-tools/$name');
-    }
+    Routemaster.of(context).push('/mod-tools/$name');
+  }
+
+  void joinCommunity(WidgetRef ref, Community community, BuildContext context) {
+    ref
+        .read(communityControllerProvider.notifier)
+        .joinCommunity(community, context);
+  }
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -68,7 +73,8 @@ class CommunityScreen extends ConsumerWidget {
                               ),
                               community.mods.contains(user.uid)
                                   ? OutlinedButton(
-                                      onPressed: () => navigateToModTools(context),
+                                      onPressed: () =>
+                                          navigateToModTools(context),
                                       style: ElevatedButton.styleFrom(
                                         shape: RoundedRectangleBorder(
                                           borderRadius:
@@ -80,7 +86,8 @@ class CommunityScreen extends ConsumerWidget {
                                       child: const Text('Mod Tools'),
                                     )
                                   : OutlinedButton(
-                                      onPressed: () {},
+                                      onPressed: () => joinCommunity(
+                                          ref, community, context),
                                       style: ElevatedButton.styleFrom(
                                         shape: RoundedRectangleBorder(
                                           borderRadius:
