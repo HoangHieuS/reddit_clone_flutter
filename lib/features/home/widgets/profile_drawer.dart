@@ -16,6 +16,10 @@ class ProfileDrawer extends ConsumerWidget {
     Routemaster.of(context).push('/u/$uid');
   }
 
+  void changeTheme(WidgetRef ref) {
+    ref.read(themeNotifierProvider.notifier).toggleTheme();
+  }
+
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final user = ref.watch(userProvider)!;
@@ -54,8 +58,8 @@ class ProfileDrawer extends ConsumerWidget {
                 onTap: () => logOut(ref),
               ),
               Switch.adaptive(
-                value: true,
-                onChanged: (value) {},
+                value: ref.watch(themeNotifierProvider.notifier).mode == ThemeMode.dark,
+                onChanged: (value) => changeTheme(ref),
               ),
             ],
           ),
