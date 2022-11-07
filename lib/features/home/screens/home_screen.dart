@@ -1,12 +1,22 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:reddit_clone/core/constants/app_constants.dart';
 import 'package:reddit_clone/features/auth/controller/auth_controller.dart';
 import 'package:reddit_clone/features/home/widgets/widgets.dart';
+import 'package:reddit_clone/theme/pallete.dart';
 
 import '../delegates/search_community_delegates.dart';
 
-class HomeScreen extends ConsumerWidget {
-  const HomeScreen({super.key});
+class HomeScreen extends ConsumerStatefulWidget {
+  const HomeScreen({Key? key}) : super(key: key);
+
+  @override
+  ConsumerState<HomeScreen> createState() => _HomeScreenState();
+}
+
+class _HomeScreenState extends ConsumerState<HomeScreen> {
+  int _page = 0;
 
   void displayDrawer(BuildContext context) {
     Scaffold.of(context).openDrawer();
@@ -16,10 +26,17 @@ class HomeScreen extends ConsumerWidget {
     Scaffold.of(context).openEndDrawer();
   }
 
-  @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final user = ref.watch(userProvider)!;
+  void onPageChanged(int page) {
+    setState(() {
+      _page = page;
+    });
+  }
 
+  @override
+  Widget build(BuildContext context) {
+    final user = ref.watch(userProvider)!;
+    final currentTheme = ref.watch(themeNotifierProvider);
+    
     return Scaffold(
       appBar: AppBar(
         title: const Text('Home'),
@@ -49,8 +66,27 @@ class HomeScreen extends ConsumerWidget {
           })
         ],
       ),
+      body: AppConstants.tabWidgets[_page],
       drawer: const CommunityListDrawer(),
       endDrawer: const ProfileDrawer(),
+      bottomNavigationBar: CupertinoTabBar(
+        activeColor: currentTheme.iconTheme.color,
+        backgroundColor: currentTheme.backgroundColor,
+        items: const [
+          BottomNavigationBarItem(
+            icon: Icon(Icons.home),
+            label: '',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.add),
+            label: '',
+          ),
+        ],
+        onTap: onPageChanged,
+        currentIndex: _page,
+      ),
+      
     );
   }
 }
+

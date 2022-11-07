@@ -31,6 +31,9 @@ final loggedInRoute = RouteMap(
     '/edit-profile/:uid': (routeData) => MaterialPage(
           child: EditProfileScreen(uid: routeData.pathParameters['uid']!),
         ),
+    '/add-post/:type': (routeData) => MaterialPage(
+          child: AddPostTypeScreen(type: routeData.pathParameters['type']!),
+        ),
   },
 );
  
