@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart';
 import 'package:reddit_clone/features/features.dart';
 
 class AppConstants {
@@ -13,6 +14,21 @@ class AppConstants {
   static const tabWidgets = [
     FeedScreen(),
     AddPostScreen(),
-
   ];
+
+   static const IconData up = IconData(0xe800, fontFamily: 'MyFlutterApp', fontPackage: null);
+  static const IconData down = IconData(0xe801, fontFamily: 'MyFlutterApp', fontPackage: null);
+
+  static const awardsPath = 'assets/images/awards';
+
+  static const awards = {
+    'awesomeAns': '${AppConstants.awardsPath}/awesomeanswer.png',
+    'gold': '${AppConstants.awardsPath}/gold.png',
+    'platinum': '${AppConstants.awardsPath}/platinum.png',
+    'helpful': '${AppConstants.awardsPath}/helpful.png',
+    'plusone': '${AppConstants.awardsPath}/plusone.png',
+    'rocket': '${AppConstants.awardsPath}/rocket.png',
+    'thankyou': '${AppConstants.awardsPath}/thankyou.png',
+    'til': '${AppConstants.awardsPath}/til.png',
+  };
 }

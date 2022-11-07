@@ -22,6 +22,12 @@ final postControllerProvider =
   );
 });
 
+final userPostsProvider =
+    StreamProvider.family((ref, List<Community> communities) {
+  final postController = ref.watch(postControllerProvider.notifier);
+
+  return postController.fetchUserPosts(communities);
+});
 
 class PostController extends StateNotifier<bool> {
   final PostRepo _postRepo;
@@ -43,7 +49,7 @@ class PostController extends StateNotifier<bool> {
     required String description,
   }) async {
     state = true;
-    String postId = Uuid().v1();
+    String postId = const Uuid().v1();
     final user = _ref.read(userProvider)!;
 
     final Post post = Post(
@@ -77,7 +83,7 @@ class PostController extends StateNotifier<bool> {
     required String link,
   }) async {
     state = true;
-    String postId = Uuid().v1();
+    String postId = const Uuid().v1();
     final user = _ref.read(userProvider)!;
 
     final Post post = Post(
@@ -111,7 +117,7 @@ class PostController extends StateNotifier<bool> {
     required File? file,
   }) async {
     state = true;
-    String postId = Uuid().v1();
+    String postId = const Uuid().v1();
     final user = _ref.read(userProvider)!;
     final imageRes = await _storageRepo.storeFile(
       path: 'posts/${selectedCommunity.name}',
@@ -143,5 +149,12 @@ class PostController extends StateNotifier<bool> {
         Routemaster.of(context).pop();
       });
     });
+  }
+
+  Stream<List<Post>> fetchUserPosts(List<Community> communities) {
+    if (communities.isNotEmpty) {
+      return _postRepo.fetchUserPosts(communities);
+    }
+    return Stream.value([]);
   }
 }
