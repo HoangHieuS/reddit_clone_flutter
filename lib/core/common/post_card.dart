@@ -5,6 +5,7 @@ import 'package:reddit_clone/features/auth/controller/auth_controller.dart';
 import 'package:reddit_clone/models/user_model.dart';
 import 'package:reddit_clone/theme/pallete.dart';
 
+import '../../features/post/controller/post_controller.dart';
 import '../../models/post_model.dart';
 import '../constants/app_constants.dart';
 
@@ -14,6 +15,18 @@ class PostCard extends ConsumerWidget {
     Key? key,
     required this.post,
   }) : super(key: key);
+
+  void deletePost(WidgetRef ref, BuildContext context) async {
+    ref.read(postControllerProvider.notifier).deletePost(post, context);
+  }
+
+  void upvotePost(WidgetRef ref) async {
+    ref.read(postControllerProvider.notifier).upvote(post);
+  }
+
+  void downvotePost(WidgetRef ref) async {
+    ref.read(postControllerProvider.notifier).downvote(post);
+  }
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -42,7 +55,7 @@ class PostCard extends ConsumerWidget {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          postInfo(user),
+                          postInfo(user, ref, context),
                           Padding(
                             padding: const EdgeInsets.only(top: 10, bottom: 10),
                             child: Text(
@@ -66,9 +79,9 @@ class PostCard extends ConsumerWidget {
                               ),
                             ),
                           if (isTypeLink)
-                            SizedBox(
-                              height: MediaQuery.of(context).size.height * 0.35,
-                              width: double.infinity,
+                            Padding(
+                              padding:
+                                  const EdgeInsets.symmetric(horizontal: 18),
                               child: AnyLinkPreview(
                                 displayDirection:
                                     UIDirection.uiDirectionHorizontal,
@@ -87,7 +100,7 @@ class PostCard extends ConsumerWidget {
                                 ),
                               ),
                             ),
-                          postActions(user),
+                          postActions(user, ref),
                         ],
                       ),
                     )
@@ -101,7 +114,7 @@ class PostCard extends ConsumerWidget {
     );
   }
 
-  Widget postInfo(UserModel user) {
+  Widget postInfo(UserModel user, WidgetRef ref, BuildContext context) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
@@ -134,7 +147,7 @@ class PostCard extends ConsumerWidget {
         ),
         if (post.uid == user.uid)
           IconButton(
-            onPressed: () {},
+            onPressed: () => deletePost(ref, context),
             icon: Icon(
               Icons.delete,
               color: Pallete.redColor,
@@ -144,13 +157,13 @@ class PostCard extends ConsumerWidget {
     );
   }
 
-  Widget postActions(UserModel user) {
+  Widget postActions(UserModel user, WidgetRef ref) {
     return Row(
       children: [
         Row(
           children: [
             IconButton(
-              onPressed: () {},
+              onPressed: () => upvotePost(ref),
               icon: Icon(
                 AppConstants.up,
                 size: 30,
@@ -163,7 +176,7 @@ class PostCard extends ConsumerWidget {
               style: const TextStyle(fontSize: 17),
             ),
             IconButton(
-              onPressed: () {},
+              onPressed: () => downvotePost(ref),
               icon: Icon(
                 AppConstants.down,
                 size: 30,
