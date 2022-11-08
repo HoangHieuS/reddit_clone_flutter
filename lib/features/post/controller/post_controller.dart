@@ -29,6 +29,16 @@ final userPostsProvider =
   return postController.fetchUserPosts(communities);
 });
 
+final getPostByIdProvider = StreamProvider.family((ref, String postId) {
+  final postController = ref.watch(postControllerProvider.notifier);
+  return postController.getPostById(postId);
+});
+
+final getPostCommentsProvider = StreamProvider.family((ref, String postId) {
+  final postController = ref.watch(postControllerProvider.notifier);
+  return postController.fetchPostComments(postId);
+});
+
 class PostController extends StateNotifier<bool> {
   final PostRepo _postRepo;
   final Ref _ref;
@@ -160,7 +170,8 @@ class PostController extends StateNotifier<bool> {
 
   void deletePost(Post post, BuildContext context) async {
     final res = await _postRepo.deletePost(post);
-    res.fold((l) => null, (r) => showSnackBar(context, 'Post Deleted successfully!'));
+    res.fold((l) => null,
+        (r) => showSnackBar(context, 'Post Deleted successfully!'));
   }
 
   void upvote(Post post) async {
@@ -171,5 +182,32 @@ class PostController extends StateNotifier<bool> {
   void downvote(Post post) async {
     final uid = _ref.read(userProvider)!.uid;
     _postRepo.downvote(post, uid);
+  }
+
+  Stream<Post> getPostById(String postId) {
+    return _postRepo.getPostById(postId);
+  }
+
+  void addComment({
+    required BuildContext context,
+    required String text,
+    required Post post,
+  }) async {
+    final user = _ref.read(userProvider)!;
+    final String commentId = const Uuid().v1();
+    Comment comment = Comment(
+      id: commentId,
+      text: text,
+      createdAt: DateTime.now(),
+      postId: post.id,
+      username: user.name,
+      profilePic: user.profilePic,
+    );
+    final res = await _postRepo.addComment(comment);
+    res.fold((l) => showSnackBar(context, l.message), (r) => null);
+  }
+
+  Stream<List<Comment>> fetchPostComments(String postId) {
+    return _postRepo.getCommentsOfPost(postId);
   }
 }

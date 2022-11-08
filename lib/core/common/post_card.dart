@@ -1,9 +1,13 @@
 import 'package:any_link_preview/any_link_preview.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:reddit_clone/core/common/error_text.dart';
+import 'package:reddit_clone/core/common/loader.dart';
 import 'package:reddit_clone/features/auth/controller/auth_controller.dart';
+import 'package:reddit_clone/features/community/controller/community_controller.dart';
 import 'package:reddit_clone/models/user_model.dart';
 import 'package:reddit_clone/theme/pallete.dart';
+import 'package:routemaster/routemaster.dart';
 
 import '../../features/post/controller/post_controller.dart';
 import '../../models/post_model.dart';
@@ -26,6 +30,18 @@ class PostCard extends ConsumerWidget {
 
   void downvotePost(WidgetRef ref) async {
     ref.read(postControllerProvider.notifier).downvote(post);
+  }
+
+  void navigateToUser(BuildContext context) {
+    Routemaster.of(context).push('/u/${post.uid}');
+  }
+
+  void navigateToCommunity(BuildContext context) {
+    Routemaster.of(context).push('/r/${post.communityName}');
+  }
+
+  void navigateToPostComment(BuildContext context) {
+    Routemaster.of(context).push('/post/${post.id}/comments');
   }
 
   @override
@@ -100,16 +116,17 @@ class PostCard extends ConsumerWidget {
                                 ),
                               ),
                             ),
-                          postActions(user, ref),
+                          postActions(user, ref, context),
                         ],
                       ),
-                    )
+                    ),
                   ],
                 ),
               ),
             ],
           ),
         ),
+        const SizedBox(height: 10),
       ],
     );
   }
@@ -120,9 +137,12 @@ class PostCard extends ConsumerWidget {
       children: [
         Row(
           children: [
-            CircleAvatar(
-              backgroundImage: NetworkImage(post.communityProfilePic),
-              radius: 16,
+            GestureDetector(
+              onTap: () => navigateToCommunity(context),
+              child: CircleAvatar(
+                backgroundImage: NetworkImage(post.communityProfilePic),
+                radius: 16,
+              ),
             ),
             Padding(
               padding: const EdgeInsets.only(left: 8),
@@ -136,9 +156,12 @@ class PostCard extends ConsumerWidget {
                       fontWeight: FontWeight.bold,
                     ),
                   ),
-                  Text(
-                    'u/${post.username}',
-                    style: const TextStyle(fontSize: 12),
+                  GestureDetector(
+                    onTap: () => navigateToUser(context),
+                    child: Text(
+                      'u/${post.username}',
+                      style: const TextStyle(fontSize: 12),
+                    ),
                   ),
                 ],
               ),
@@ -157,8 +180,9 @@ class PostCard extends ConsumerWidget {
     );
   }
 
-  Widget postActions(UserModel user, WidgetRef ref) {
+  Widget postActions(UserModel user, WidgetRef ref, BuildContext context) {
     return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
         Row(
           children: [
@@ -187,18 +211,34 @@ class PostCard extends ConsumerWidget {
             ),
           ],
         ),
-        Row(
-          children: [
-            IconButton(
-              onPressed: () {},
-              icon: const Icon(Icons.comment),
-            ),
-            Text(
-              '${post.commentCount == 0 ? 'Comment' : post.commentCount}',
-              style: const TextStyle(fontSize: 17),
-            ),
-          ],
+        GestureDetector(
+          onTap: () => navigateToPostComment(context),
+          child: Row(
+            children: [
+              IconButton(
+                onPressed: () => navigateToPostComment(context),
+                icon: const Icon(Icons.comment),
+              ),
+              Text(
+                '${post.commentCount == 0 ? 'Comment' : post.commentCount}',
+                style: const TextStyle(fontSize: 17),
+              ),
+            ],
+          ),
         ),
+        ref.watch(getCommunityByNameProvider(post.communityName)).when(
+              data: (data) {
+                if (data.mods.contains(user.uid)) {
+                  return IconButton(
+                    onPressed: () => deletePost(ref, context),
+                    icon: const Icon(Icons.admin_panel_settings),
+                  );
+                }
+                return const SizedBox();
+              },
+              error: (error, stackTrace) => ErrorText(error: error.toString()),
+              loading: () => const Loader(),
+            ),
       ],
     );
   }

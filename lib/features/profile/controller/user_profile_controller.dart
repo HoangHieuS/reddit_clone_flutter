@@ -21,6 +21,10 @@ final userProfileControllerProvider =
   );
 });
 
+final getUserPostsProvider = StreamProvider.family((ref, String uid) {
+  return ref.read(userProfileControllerProvider.notifier).getUserPosts(uid);
+});
+
 class UserProfileController extends StateNotifier<bool> {
   final UserProfileRepo _userProfileRepo;
   final Ref _ref;
@@ -77,5 +81,9 @@ class UserProfileController extends StateNotifier<bool> {
         Routemaster.of(context).pop();
       },
     );
+  }
+
+  Stream<List<Post>> getUserPosts(String uid) {
+    return _userProfileRepo.getUserPosts(uid);
   }
 }

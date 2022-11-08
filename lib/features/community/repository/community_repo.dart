@@ -32,11 +32,16 @@ class CommunityRepo {
     }
   }
 
+  CollectionReference get _communities =>
+      _firestore.collection(FirebaseConstants.communitiesCollection);
+  CollectionReference get _posts =>
+      _firestore.collection(FirebaseConstants.postsCollection);
+
   FutureVoid joinCommunity(String communityName, String uid) async {
     try {
       return right(_communities.doc(communityName).update({
         'members': FieldValue.arrayUnion([uid]),
-      })) ;
+      }));
     } on FirebaseException catch (e) {
       throw e.message!;
     } catch (e) {
@@ -48,7 +53,7 @@ class CommunityRepo {
     try {
       return right(_communities.doc(communityName).update({
         'members': FieldValue.arrayRemove([uid]),
-      })) ;
+      }));
     } on FirebaseException catch (e) {
       throw e.message!;
     } catch (e) {
@@ -119,6 +124,15 @@ class CommunityRepo {
     }
   }
 
-  CollectionReference get _communities =>
-      _firestore.collection(FirebaseConstants.communitiesCollection);
+  Stream<List<Post>> getCommunityPosts(String name) {
+    return _posts
+        .where('communityName', isEqualTo: name)
+        .orderBy('createdAt', descending: true)
+        .snapshots()
+        .map(
+          (event) => event.docs
+              .map((e) => Post.fromMap(e.data() as Map<String, dynamic>))
+              .toList(),
+        );
+  }
 }
