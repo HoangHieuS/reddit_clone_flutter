@@ -20,6 +20,8 @@ class PostRepo {
       _firestore.collection(FirebaseConstants.postsCollection);
   CollectionReference get _comments =>
       _firestore.collection(FirebaseConstants.commentsCollection);
+  CollectionReference get _users =>
+      _firestore.collection(FirebaseConstants.usersCollection);
 
   FutureVoid addPost(Post post) async {
     try {
@@ -97,7 +99,7 @@ class PostRepo {
 
   FutureVoid addComment(Comment comment) async {
     try {
-      await _comments.doc(comment.id).set(comment.toMap());
+      _comments.doc(comment.id).set(comment.toMap());
 
       return right(_posts.doc(comment.postId).update({
         'commentCount': FieldValue.increment(1),
@@ -117,5 +119,23 @@ class PostRepo {
         .map((event) => event.docs
             .map((e) => Comment.fromMap(e.data() as Map<String, dynamic>))
             .toList());
+  }
+
+  FutureVoid awardPost(Post post, String award, String senderId) async {
+    try {
+      _posts.doc(post.id).update({
+        'awards': FieldValue.arrayUnion([award]),
+      });
+      _users.doc(senderId).update({
+        'awards': FieldValue.arrayRemove([award]),
+      });
+      return right(_users.doc(post.uid).update({
+        'awards': FieldValue.arrayUnion([award]),
+      }));
+    } on FirebaseException catch (e) {
+      throw e.message!;
+    } catch (e) {
+      return left(Failure(e.toString()));
+    }
   }
 }
