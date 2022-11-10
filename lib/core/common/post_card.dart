@@ -73,6 +73,7 @@ class PostCard extends ConsumerWidget {
             child: Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
+                if(kIsWeb)
                 voteOnWeb(ref, user),
                 Expanded(
                   child: Column(
