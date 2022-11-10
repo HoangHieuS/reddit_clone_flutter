@@ -90,7 +90,9 @@ class PostCard extends ConsumerWidget {
                                 itemBuilder: (context, index) {
                                   final award = post.awards[index];
                                   return Image.asset(
-                                      AppConstants.awards[award]!, height: 23,);
+                                    AppConstants.awards[award]!,
+                                    height: 23,
+                                  );
                                 },
                               ),
                             ),
@@ -204,13 +206,15 @@ class PostCard extends ConsumerWidget {
   }
 
   Widget postActions(UserModel user, WidgetRef ref, BuildContext context) {
+    final isGuest = !user.isAuthenticated;
+
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
         Row(
           children: [
             IconButton(
-              onPressed: () => upvotePost(ref),
+              onPressed: isGuest ? () {} : () => upvotePost(ref),
               icon: Icon(
                 AppConstants.up,
                 size: 30,
@@ -223,7 +227,7 @@ class PostCard extends ConsumerWidget {
               style: const TextStyle(fontSize: 17),
             ),
             IconButton(
-              onPressed: () => downvotePost(ref),
+              onPressed: isGuest ? () {} : () => downvotePost(ref),
               icon: Icon(
                 AppConstants.down,
                 size: 30,
@@ -263,7 +267,7 @@ class PostCard extends ConsumerWidget {
               loading: () => const Loader(),
             ),
         IconButton(
-          onPressed: () {
+          onPressed:  isGuest? () {} : () {
             showDialog(
               context: context,
               builder: (context) => Dialog(

@@ -41,6 +41,11 @@ final getPostCommentsProvider = StreamProvider.family((ref, String postId) {
   return postController.fetchPostComments(postId);
 });
 
+final guestPostProvider = StreamProvider((ref) {
+  final postController = ref.watch(postControllerProvider.notifier);
+  return postController.fetchGuestPosts();
+});
+
 class PostController extends StateNotifier<bool> {
   final PostRepo _postRepo;
   final Ref _ref;
@@ -250,5 +255,9 @@ class PostController extends StateNotifier<bool> {
 
   Stream<List<Comment>> fetchPostComments(String postId) {
     return _postRepo.getCommentsOfPost(postId);
+  }
+
+  Stream<List<Post>> fetchGuestPosts() {
+    return _postRepo.fetchGuestPosts();
   }
 }

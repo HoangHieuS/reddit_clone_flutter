@@ -5,6 +5,8 @@ import 'package:reddit_clone/features/community/controller/community_controller.
 import 'package:reddit_clone/models/models.dart';
 import 'package:routemaster/routemaster.dart';
 
+import '../../auth/controller/auth_controller.dart';
+
 class CommunityListDrawer extends ConsumerWidget {
   const CommunityListDrawer({super.key});
 
@@ -18,38 +20,44 @@ class CommunityListDrawer extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final user = ref.watch(userProvider)!;
+    final isGuest = !user.isAuthenticated;
+
     return Drawer(
       child: SafeArea(
         child: Column(
           children: [
-            ListTile(
-              title: const Text('Create a community'),
-              leading: const Icon(Icons.add),
-              onTap: () => navigateToCreateCommunity(context),
-            ),
-            ref.watch(userCommunitiesProvider).when(
-                  data: (communities) => Expanded(
-                    child: ListView.builder(
-                      itemCount: communities.length,
-                      itemBuilder: (context, index) {
-                        final communitiy = communities[index];
-                        return ListTile(
-                          leading: CircleAvatar(
-                            backgroundImage: NetworkImage(communitiy.avatar),
-                          ),
-                          title: Text('r/${communitiy.name}'),
-                          onTap: () {
-                            navigateToCommunity(context, communitiy);
-                          },
-                        );
-                      },
+            isGuest
+                ? const SignInButton()
+                : ListTile(
+                    title: const Text('Create a community'),
+                    leading: const Icon(Icons.add),
+                    onTap: () => navigateToCreateCommunity(context),
+                  ),
+            if (!isGuest)
+              ref.watch(userCommunitiesProvider).when(
+                    data: (communities) => Expanded(
+                      child: ListView.builder(
+                        itemCount: communities.length,
+                        itemBuilder: (context, index) {
+                          final communitiy = communities[index];
+                          return ListTile(
+                            leading: CircleAvatar(
+                              backgroundImage: NetworkImage(communitiy.avatar),
+                            ),
+                            title: Text('r/${communitiy.name}'),
+                            onTap: () {
+                              navigateToCommunity(context, communitiy);
+                            },
+                          );
+                        },
+                      ),
                     ),
+                    error: (error, stackTrace) => ErrorText(
+                      error: error.toString(),
+                    ),
+                    loading: () => const Loader(),
                   ),
-                  error: (error, stackTrace) => ErrorText(
-                    error: error.toString(),
-                  ),
-                  loading: () => const Loader(),
-                ),
           ],
         ),
       ),
