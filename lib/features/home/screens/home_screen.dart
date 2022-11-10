@@ -1,10 +1,12 @@
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:reddit_clone/core/constants/app_constants.dart';
 import 'package:reddit_clone/features/auth/controller/auth_controller.dart';
 import 'package:reddit_clone/features/home/widgets/widgets.dart';
 import 'package:reddit_clone/theme/pallete.dart';
+import 'package:routemaster/routemaster.dart';
 
 import '../delegates/search_community_delegates.dart';
 
@@ -32,6 +34,10 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     });
   }
 
+  void navigateToAddPost(BuildContext context) {
+    Routemaster.of(context).push('/add-post');
+  }
+
   @override
   Widget build(BuildContext context) {
     final user = ref.watch(userProvider)!;
@@ -57,6 +63,10 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
             },
             icon: const Icon(Icons.search),
           ),
+          IconButton(
+            onPressed: () => navigateToAddPost(context),
+            icon: const Icon(Icons.add),
+          ),
           Builder(builder: (context) {
             return IconButton(
               onPressed: () => displayEndDrawer(context),
@@ -70,7 +80,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
       body: AppConstants.tabWidgets[_page],
       drawer: const CommunityListDrawer(),
       endDrawer: isGuest ? null : const ProfileDrawer(),
-      bottomNavigationBar: isGuest
+      bottomNavigationBar: isGuest || kIsWeb
           ? null
           : CupertinoTabBar(
               activeColor: currentTheme.iconTheme.color,

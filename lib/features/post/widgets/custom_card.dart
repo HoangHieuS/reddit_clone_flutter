@@ -1,11 +1,12 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
 class CustomCard extends StatelessWidget {
   const CustomCard({
     Key? key,
-    this.cardSize = 120,
+    this.cardSize = kIsWeb ? 360 : 120,
     required this.currentTheme,
-    this.iconSize = 60,
+    this.iconSize = kIsWeb ? 120 : 60,
     required this.icon,
     required this.onTap,
   }) : super(key: key);

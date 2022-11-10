@@ -16,26 +16,28 @@ class AddPostScreen extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final currentTheme = ref.watch(themeNotifierProvider);
 
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      crossAxisAlignment: CrossAxisAlignment.center,
-      children: [
-        CustomCard(
-          onTap: () => navigatreToType(context, 'image'),
-          currentTheme: currentTheme,
-          icon: Icons.image_outlined,
-        ),
-        CustomCard(
-          onTap: () => navigatreToType(context, 'text'),
-          currentTheme: currentTheme,
-          icon: Icons.font_download_outlined,
-        ),
-        CustomCard(
-          onTap: () => navigatreToType(context, 'link'),
-          currentTheme: currentTheme,
-          icon: Icons.link_outlined,
-        ),
-      ],
+    return Scaffold(
+      body: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          CustomCard(
+            onTap: () => navigatreToType(context, 'image'),
+            currentTheme: currentTheme,
+            icon: Icons.image_outlined,
+          ),
+          CustomCard(
+            onTap: () => navigatreToType(context, 'text'),
+            currentTheme: currentTheme,
+            icon: Icons.font_download_outlined,
+          ),
+          CustomCard(
+            onTap: () => navigatreToType(context, 'link'),
+            currentTheme: currentTheme,
+            icon: Icons.link_outlined,
+          ),
+        ],
+      ),
     );
   }
 }

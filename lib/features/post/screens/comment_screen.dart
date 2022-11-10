@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:reddit_clone/features/post/controller/post_controller.dart';
 import 'package:reddit_clone/features/post/widgets/comment_card.dart';
+import 'package:reddit_clone/responsive/responsive.dart';
 
 import '../../../core/common/common.dart';
 import '../../../models/post_model.dart';
@@ -51,13 +52,15 @@ class _CommentScreenState extends ConsumerState<CommentScreen> {
                   children: [
                     PostCard(post: data),
                     if (!isGuest)
-                      TextField(
-                        onSubmitted: (value) => addComment(data),
-                        controller: commentController,
-                        decoration: const InputDecoration(
-                          hintText: 'What are tour thoughts?',
-                          filled: true,
-                          border: InputBorder.none,
+                      Responsive(
+                        child: TextField(
+                          onSubmitted: (value) => addComment(data),
+                          controller: commentController,
+                          decoration: const InputDecoration(
+                            hintText: 'What are tour thoughts?',
+                            filled: true,
+                            border: InputBorder.none,
+                          ),
                         ),
                       ),
                     ref.watch(getPostCommentsProvider(widget.postId)).when(

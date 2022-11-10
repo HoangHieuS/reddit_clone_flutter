@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:fpdart/fpdart.dart';
 import 'package:reddit_clone/core/failure.dart';
@@ -42,8 +43,6 @@ final getCommunityPostsProvider = StreamProvider.family((ref, String name) {
 final searchCommunityProvider = StreamProvider.family((ref, String query) {
   return ref.watch(communityControllerProvider.notifier).searchCommunity(query);
 });
-
-
 
 class CommunityController extends StateNotifier<bool> {
   final CommunityRepo _communityRepo;
@@ -113,15 +112,18 @@ class CommunityController extends StateNotifier<bool> {
   void editCommunity({
     required File? profileFile,
     required File? bannerFile,
+    required Uint8List? profileWebFile,
+    required Uint8List? bannerWebFile,
     required BuildContext context,
     required Community community,
   }) async {
     state = true;
-    if (profileFile != null) {
+    if (profileFile != null || profileWebFile != null) {
       final res = await _storageRepo.storeFile(
         path: 'communities/profile',
         id: community.name,
         file: profileFile,
+        webFile: profileWebFile,
       );
       res.fold(
         (l) => showSnackBar(context, l.message),
@@ -129,11 +131,12 @@ class CommunityController extends StateNotifier<bool> {
       );
     }
 
-    if (bannerFile != null) {
+    if (bannerFile != null || bannerWebFile != null) {
       final res = await _storageRepo.storeFile(
         path: 'communities/banner',
         id: community.name,
         file: bannerFile,
+        webFile: bannerWebFile,
       );
       res.fold(
         (l) => showSnackBar(context, l.message),
@@ -162,7 +165,7 @@ class CommunityController extends StateNotifier<bool> {
     );
   }
 
-   Stream<List<Post>> getCommunityPosts(String name) {
+  Stream<List<Post>> getCommunityPosts(String name) {
     return _communityRepo.getCommunityPosts(name);
   }
 }

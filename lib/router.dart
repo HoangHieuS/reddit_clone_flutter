@@ -37,5 +37,8 @@ final loggedInRoute = RouteMap(
     '/post/:postId/comments': (routeData) => MaterialPage(
           child: CommentScreen(postId: routeData.pathParameters['postId']!),
         ),
+    '/add-post': (routeData) => const MaterialPage(
+          child: AddPostScreen(),
+        ),
   },
 );
